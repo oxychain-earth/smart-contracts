@@ -49,4 +49,12 @@ contract Marketplace is Ownable {
         (bool withdrawalResult, ) = msg.sender.call{value: totalBalance}("");
         require(withdrawalResult, "Marketplace::withdrawMatic(): Withdrawal failed.");
     }
+
+    function getTokenPrices(uint256[] memory _ids) view external returns (uint256[] memory, uint256[] memory) {
+        uint256[] memory tokenPrices = new uint256[](_ids.length);
+        for (uint256 i = 0; i < _ids.length; i++) {
+            tokenPrices[i] = tokenToPrice[_ids[i]];
+        }
+        return (_ids, tokenPrices);
+    }
 }
