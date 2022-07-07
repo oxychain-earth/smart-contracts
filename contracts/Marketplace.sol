@@ -2,8 +2,9 @@
 pragma solidity >0.8.0;
 
 import "./OXYToken.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 
-contract Marketplace is Ownable {
+contract Marketplace is Ownable, ERC1155Receiver {
 
     OXYToken public oxyToken;
 
@@ -56,5 +57,25 @@ contract Marketplace is Ownable {
             tokenPrices[i] = tokenToPrice[_ids[i]];
         }
         return (_ids, tokenPrices);
+    }
+
+    function onERC1155Received(
+        address,
+        address,
+        uint256,
+        uint256,
+        bytes memory
+    ) public virtual override returns (bytes4) {
+        return this.onERC1155Received.selector;
+    }
+
+    function onERC1155BatchReceived(
+        address,
+        address,
+        uint256[] memory,
+        uint256[] memory,
+        bytes memory
+    ) public virtual override returns (bytes4) {
+        return this.onERC1155BatchReceived.selector;
     }
 }
