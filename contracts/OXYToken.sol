@@ -144,7 +144,7 @@ contract OXYToken is Ownable, ERC1155 {
         );
         bytes memory serialNumber = bytes(_serialNumber);
         require(
-            serialNumber.length == 0,
+            serialNumber.length != 0,
             "OXYToken::mint: '_serialNumber' has to be different than empty."
         );
         require(
@@ -214,11 +214,6 @@ contract OXYToken is Ownable, ERC1155 {
         _burnBatch(_account, _ids, _amounts);
     }
 
-    /**
-     * @dev Returns the array of token ids created inside a project
-     *
-     * @param '_projectId' the id of the project
-     */
     function getTokensOfProject(uint256 _projectId)
         external
         view
