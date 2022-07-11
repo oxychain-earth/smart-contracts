@@ -20,8 +20,9 @@ contract Marketplace is Ownable, ERC1155Receiver {
         oxyToken = OXYToken(_oxyToken);
     }
 
-    function buy(uint256 _tokenId, uint256 _quantity, uint256 _price) external payable {
-        require(msg.value >= _price * _quantity, "Marketplace::buy(): Matic value sent is insufficient.");
+    function buy(uint256 _tokenId, uint256 _quantity) external payable {
+        const price = tokenToPrice[_tokenId];
+        require(msg.value >= price * _quantity, "Marketplace::buy(): Matic value sent is insufficient.");
         oxyToken.safeTransferFrom(address(this), msg.sender, _tokenId, _quantity, "");
         emit OxygenBought(_tokenId, msg.sender, _quantity);
     }
