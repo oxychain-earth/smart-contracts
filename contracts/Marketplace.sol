@@ -3,11 +3,13 @@ pragma solidity >0.8.0;
 
 import "./OXYToken.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-contract Marketplace is Ownable, ERC1155Receiver {
+contract Marketplace is Ownable, ERC1155Receiver{
 
     OXYToken public oxyToken;
 
+    
     mapping(uint256 => uint256) public tokenToPrice;
 
     event OxygenBought(uint256 _tokenId, address _buyer, uint256 _quantity);
@@ -21,10 +23,16 @@ contract Marketplace is Ownable, ERC1155Receiver {
     }
 
     function buy(uint256 _tokenId, uint256 _quantity) external payable {
-        const price = tokenToPrice[_tokenId];
+        uint256 price = tokenToPrice[_tokenId];
         require(msg.value >= price * _quantity, "Marketplace::buy(): Matic value sent is insufficient.");
         oxyToken.safeTransferFrom(address(this), msg.sender, _tokenId, _quantity, "");
         emit OxygenBought(_tokenId, msg.sender, _quantity);
+    }
+
+ function buyAndRelease(uint256 _tokenId, uint256 _quantity) external payable {
+        uint256 price = tokenToPrice[_tokenId];
+        require(msg.value >= price * _quantity, "Marketplace::buy(): Matic value sent is insufficient.");
+        oxyToken.releaseForOthers(address(this), _tokenId, _quantity,msg.sender);
     }
 
     function changePrice(uint256 _tokenId, uint256 _price) external onlyOwner {

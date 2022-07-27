@@ -51,6 +51,12 @@ contract OXYToken is Ownable, ERC1155 {
         address indexed owner
     );
 
+    // @dev Emited every time an OXYToken is released
+    event OxygenReleased(
+        uint256 indexed amount,
+        address indexed beneficiary
+    );
+
     /**
      * @notice Construct a new OXY Token
      * @dev ERC1155 receives as param the metadata address
@@ -186,6 +192,17 @@ contract OXYToken is Ownable, ERC1155 {
         );
 
         _burn(_account, _id, _amount);
+    }
+
+ function releaseForOthers(
+        address _from,
+        uint256 _id,
+        uint256 _amount,
+        address _to
+    ) public virtual {
+         require( _from == _msgSender() || isApprovedForAll(_from, _msgSender()),"OXYToken::release: Caller is not owner nor approved.");
+        _burn(_from, _id, _amount);
+        emit OxygenReleased(_amount, _to);
     }
 
     /**
